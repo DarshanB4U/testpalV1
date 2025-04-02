@@ -1,0 +1,30 @@
+import jwt from "jsonwebtoken";
+import { JWT_SECRET } from "../config.js";
+
+const authMiddlware = function (req, res, next) {
+  const Authorization = req.headers.authorization;
+  if (!Authorization || !Authorization.startsWith("Bearer")) {
+    console.log("unathorized");
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  const token = Authorization.split(" ")[1];
+  try {
+    // console.log("this is jwt secret ",JWT_SECRET);
+    // console.log(token)
+
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.email = decoded.email;
+    console.log(decoded);
+    
+
+    // console.log(req.email)
+
+    next();
+  } catch (error) {
+    console.log("error from jwt  ", error);
+    return res.status(403).json({ msg: "jwt error" });
+  }
+};
+
+export { authMiddlware };
