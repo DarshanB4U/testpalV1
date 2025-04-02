@@ -56,7 +56,7 @@ const AiAssistant = () => {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
-  const handleSend = () => {
+  const handleSend = async () => {
     if (input.trim() === '') return;
     
     // Add user message
@@ -70,17 +70,29 @@ const AiAssistant = () => {
     setInput('');
     setIsLoading(true);
     
-    // Simulate AI response delay
-    setTimeout(() => {
-      const aiResponse: Message = {
+    try {
+      const response = await aiService.askQuestion(input);
+      
+      if (response.success) {
+        const aiResponse: Message = {
+          id: (Date.now() + 1).toString(),
+          text: response.answer,
+          sender: 'ai'
+        };
+        setMessages(prev => [...prev, aiResponse]);
+      } else {
+        throw new Error(response.error);
+      }
+    } catch (error) {
+      const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: getMockResponse(input),
+        text: "Sorry, I couldn't process your question. Please try again.",
         sender: 'ai'
       };
-      
-      setMessages(prev => [...prev, aiResponse]);
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
   
   const handleKeyDown = (e: React.KeyboardEvent) => {

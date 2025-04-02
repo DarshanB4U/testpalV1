@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { User, Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { authService } from '../services/api';
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -10,33 +11,43 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+    setIsLoading(true);
     
     // Basic validation
     if (!name || !email || !password || !confirmPassword) {
       setError('Please fill in all fields');
+      setIsLoading(false);
       return;
     }
     
     if (password !== confirmPassword) {
       setError('Passwords do not match');
+      setIsLoading(false);
       return;
     }
     
     if (password.length < 8) {
       setError('Password must be at least 8 characters long');
+      setIsLoading(false);
       return;
     }
     
-    // Mock registration - in a real app, this would call an API
-    console.log('Registering with:', { name, email, password });
-    
-    // Simulate successful registration and redirect
-    setTimeout(() => {
-      window.location.href = '/dashboard';
-    }, 1000);
+    try {
+      const response = await authService.register(name, email, password);
+      if (response.success) {
+        navigate('/dashboard');
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to register');
+    } finally {
+      setIsLoading(false);
+    }
   };
   
   return (

@@ -23,12 +23,25 @@ api.interceptors.request.use(
   }
 );
 
+// Add response interceptor to handle auth errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('sessionId');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
 // Auth services
 export const authService = {
   register: async (name: string, email: string, password: string) => {
     const response = await api.post('/auth/register', { name, email, password });
     if (response.data.success) {
       localStorage.setItem('sessionId', response.data.sessionId);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
     }
     return response.data;
   },
@@ -37,12 +50,20 @@ export const authService = {
     const response = await api.post('/auth/login', { email, password });
     if (response.data.success) {
       localStorage.setItem('sessionId', response.data.sessionId);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
     }
     return response.data;
   },
   
   logout: () => {
     localStorage.removeItem('sessionId');
+    localStorage.removeItem('user');
+    window.location.href = '/login';
+  },
+
+  getCurrentUser: () => {
+    const userStr = localStorage.getItem('user');
+    return userStr ? JSON.parse(userStr) : null;
   }
 };
 

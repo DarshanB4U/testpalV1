@@ -1,29 +1,38 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { authService } from '../services/api';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+    setIsLoading(true);
     
     // Basic validation
     if (!email || !password) {
       setError('Please fill in all fields');
+      setIsLoading(false);
       return;
     }
     
-    // Mock login - in a real app, this would call an API
-    console.log('Logging in with:', { email, password });
-    
-    // Simulate successful login and redirect
-    setTimeout(() => {
-      window.location.href = '/dashboard';
-    }, 1000);
+    try {
+      const response = await authService.login(email, password);
+      if (response.success) {
+        navigate('/dashboard');
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to login');
+    } finally {
+      setIsLoading(false);
+    }
   };
   
   return (
@@ -140,9 +149,10 @@ const Login = () => {
             <div>
               <button
                 type="submit"
+                disabled={isLoading}
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-teal-700 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
-                Sign in
+                {isLoading ? 'Signing in...' : 'Sign in'}
               </button>
             </div>
           </form>
