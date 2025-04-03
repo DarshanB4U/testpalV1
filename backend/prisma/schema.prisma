@@ -42,6 +42,7 @@ model Question {
   subject     Subject    @relation(fields: [subjectId], references: [id])
   test        Test?      @relation(fields: [testId], references: [id])
   topic       Topic      @relation(fields: [topicId], references: [id])
+  uanswers    Json       @default("[]")
 }
 
 model Subject {

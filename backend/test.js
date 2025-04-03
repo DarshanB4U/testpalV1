@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
-import { getSubjectsTopics } from "./controller.js";
+import { getSubjectNameById, getUserIdByEmail, TopicToId } from "./controller.js";
+import { generateQuestions } from "./gemini.js";
 const prisma = new PrismaClient();
 
 async function main() {
@@ -74,41 +75,122 @@ async function main() {
 // const userId = 9;
 // const subjectId = 1;
 
-// async function createTestForUser(userId, subjectId, questionsData) {
-//   console.log(
-//     `Creating test for user ID: ${userId} and subject ID: ${subjectId}`
-//   );
+async function createTestForUser(userId, subjectId, questionsData,testTitle) {
+  console.log(
+    `Creating test for user ID: ${userId} and subject ID: ${subjectId}`
+  );
 
-//   try {
-//     // Step 1: Create a new Test for the user
-//     const newTest = await prisma.test.create({
-//       data: {
-//         userId,
-//         subjectId,
-//         title: `Test for Subject ${subjectId}`,
-//         submitted: false,
-//         questions: {
-//           create: questionsData.map((q) => ({
-//             question: q.content,
-//             options: q.options,
-//             answer: q.correctAnswer,
-//             explanation: q.explanation,
-//             difficulty: q.difficulty.toUpperCase() || "MEDIUM",
-//             topicId: Number(q.topic),
-//             subjectId,
-//           })),
-//         },
-//       },
-//       include: { questions: true },
-//     });
+  try {
+    // Step 1: Create a new Test for the user
+    const newTest = await prisma.test.create({
+      data: {
+        userId,
+        subjectId,
+        title: `${testTitle}`,
+        submitted: false,
+        questions: {
+          create: questionsData.map((q) => ({
+            question: q.content,
+            options: q.options,
+            answer: q.correctAnswer,
+            explanation: q.explanation,
+            difficulty: q.difficulty.toUpperCase() || "MEDIUM",
+            topicId: Number(q.topic),
+            subjectId,
+          })),
+        },
+      },
+      include: { questions: true },
+    });
 
-//     console.log("Test created successfully:", newTest);
-//     return newTest;
-//   } catch (error) {
-//     console.error("Error creating test:", error);
-//     throw new Error("Failed to create test"); // Rethrow error for further handling if needed
-//   }
-// }
+    console.log("Test created successfully:", newTest);
+    return newTest;
+  } catch (error) {
+    console.error("Error creating test:", error);
+    throw new Error("Failed to create test"); // Rethrow error for further handling if needed
+  }
+}
 
 // const res = await createTestForUser(userId, subjectId, test);
 // console.log(res);
+
+const data = [
+  {
+    content:
+      "A car accelerates uniformly from rest to a speed of 20 m/s in 10 seconds. What is the distance traveled by the car during this time?",
+    options: ["A) 100 m", "B) 200 m", "C) 150 m", "D) 50 m"],
+    correctAnswer: "A",
+    explanation:
+      "Using the equation of motion, s = ut + (1/2)at^2, where s is the distance, u is the initial velocity (0 m/s), a is the acceleration (2 m/s^2 calculated from a = (v-u)/t), and t is the time (10 s), we get s = (1/2) * 2 * 10^2 = 100 m.",
+    subject: "Physics",
+    topic: "KINEMATICS",
+    difficulty: "Medium",
+  },
+  {
+    content: `A ball is thrown vertically upwards with an initial velocity of 20 m/s. What is the maximum height reached by the ball? (Take 
+    acceleration due to gravity, g = 10 m/s^2)`,
+    options: ["A) 10 m", "B) 20 m", "C) 40 m", "D) 80 m"],
+    correctAnswer: "B",
+    explanation:
+      "At the maximum height, the final velocity (v) of the ball is 0 m/s. Using the equation v^2 = u^2 + 2as, where u is the initial velocity (20 m/s), a is the acceleration due to gravity (-10 m/s^2, negative as it acts downwards), and s is the maximum height, we get 0 = 20^2 + 2*(-10)*s. Solving for s, we get s = 20 m.",
+    subject: "Physics",
+    topic: "KINEMATICS",
+    difficulty: "Medium",
+  },
+  {
+    content:
+      "A particle starts from rest and moves with a constant acceleration of 5 m/s². What is the distance travelled by the particle in the 3rd second of its motion?",
+    options: ["A) 10 m", "B) 12.5 m", "C) 15 m", "D) 20 m"],
+    correctAnswer: "B",
+    explanation:
+      "The distance travelled in the nth second is given by: Sn = u + (a/2)(2n-1). Here, u = 0 (starts from rest), a = 5 m/s², and n = 3. Substituting these values, we get S3 = (5/2)(2*3-1) = 12.5 m.",
+    subject: "Physics",
+    topic: "KINEMATICS",
+    difficulty: "Medium",
+  },
+];
+
+const testparam = {
+  "subject": 1,
+  "topics": ["PHYSICS AND MEASUREMENT","KINEMATICS"],
+  "difficulty": "Medium",
+  "count": 3,
+  "additionalContext": ""
+}
+
+const testTitle="my new test "
+
+async function generateAndStoreTest(userID,testparams,testTitle) {
+  console.log(`creatating test for ${userID} of subject id ${testparams.subjects} `)
+  const subjectId = testparams.subject
+
+const subjectName = await  getSubjectNameById(subjectId)
+console.log(`subject  is ${subjectName}`)
+testparams.subject = subjectName
+
+
+
+ const test = await generateQuestions(testparams)
+ 
+  console.log(test)
+  console.log("this is genrated questions ___________________________________________________")
+  
+  const testData = await TopicToId(1, test);
+
+  console.log(testData);
+  console.log("this is changeed topic ___________________________________________________")
+
+const createdTest  = createTestForUser(userID,subjectId,testData,testTitle)
+  
+}
+
+
+
+
+//  generateAndStoreTest(9,testparam,testTitle)
+
+
+// const email = "abcd@gmail.com"
+
+// const userID = await getUserIdByEmail(email)
+// console.log(userID)

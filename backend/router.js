@@ -1,12 +1,12 @@
 import { Router } from "express";
 const userRoutes = Router();
 import { z } from "zod";
-import { generateQuestions } from "./gemini.js";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "./config.js";
 import { authMiddlware } from "./middlewares/authMiddlware";
+import { generateAndStoreTest, getUserIdByEmail } from "./controller.js";
 
 const prisma = new PrismaClient();
 
@@ -112,7 +112,7 @@ userRoutes.post("/signup", async (req, res) => {
 
 // Define the schema for the test parameters
 const testParamSchema = z.object({
-  subject: z.string(),
+  subject: z.number(), /// innitially the id of subject is given and then later changer into subject topic 
   // topics: z.array(z.number()),
   topics: z.array(z.string()),
   difficulty: z.string(),
@@ -120,36 +120,32 @@ const testParamSchema = z.object({
   additionalContext: z.string(),
 });
 
+const genrateBodySchema = z.object({
+  testparam: z.object({
+    subject: z.number(),/// innitially the id of subject is given and then later changer into subject topic 
+    topics: z.array(z.string()),
+    difficulty: z.string(),
+    count: z.number(),
+    additionalContext: z.string(),
+  }),
+});
+
 // test genrate route
 userRoutes.post("/genrate", authMiddlware, async (req, res) => {
-  const testparam = req.body.testparam;
-  const testbody = testParamSchema.safeParse(testparam);
-  if (!testbody.success) {
-    return res.json({ msg: "invalid input /testparam" });
-  } else {
-    const body = req.body;
-    console.log(body);
-  }
-
-  async function generateQuestion(testparam) {
-    console.log("genrating questions-------------------------")
-    const test = await generateQuestions(testparam);
-    return test;
-  }
   try {
-    const test = await generateQuestion(testparam);
-    console.log(test);
-
-
-
-
-    // console.log("this msg from /genrate route ",req.email)
-
-    // return res.json({ msg: "success", test });
-    return res.json({  test });
+    const testparam = req.body.testparam;
+    const testbody = testParamSchema.safeParse(testparam);
+    if (!testbody.success) {
+      return res.json({ msg: "invalid input /testparam" });
+    }
+    console.log(req.email);
+    res.send(req.email);
+// console.log(req.body.title)
+    const userID = await getUserIdByEmail(req.email);
+    generateAndStoreTest(userID,testparam,req.body.title);
   } catch (error) {
-    console.log(error);
-    return res.json({ msg: "error" });
+    console.log("error accured while genration tests", error);
+    res.status(500).json({ msg: "error while genrating  test" });
   }
 });
 

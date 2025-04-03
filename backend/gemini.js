@@ -73,7 +73,7 @@ Each question must follow this exact JSON structure:
   "topic": "Specific topic from the list provided",
   "difficulty": "${difficulty}"
 }
-
+ use Use Backticks (Template Literals) to avoid any error caused by string and line breaks
 Provide the output as a well-formatted JSON array of question objects, ensuring all questions are factually accurate, text-only, and relevant to NEET preparation. dont make mistake in json structure`;
 }
 
