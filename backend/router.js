@@ -132,6 +132,7 @@ userRoutes.post("/genrate", authMiddlware, async (req, res) => {
   }
 
   async function generateQuestion(testparam) {
+    console.log("genrating questions-------------------------")
     const test = await generateQuestions(testparam);
     return test;
   }

@@ -25,53 +25,90 @@ async function main() {
 // const a = await getSubjectsTopics()
 // console.log(a)
 
+// const test = [
+//   {
+//     content:
+//       "Which of the following statements correctly describes the function of the Golgi apparatus in a eukaryotic cell?",
+//     options: [
+//       "A) It is the site of protein synthesis.",
+//       "B) It modifies, sorts, and packages proteins and lipids.",
+//       "C) It is responsible for cellular respiration.",
+//       "D) It synthesizes ATP, the energy currency of the cell.",
+//     ],
+//     correctAnswer: "B",
+//     explanation:
+//       "The Golgi apparatus is a membrane-bound organelle that functions as a processing and packaging center for proteins and lipids. It receives proteins and lipids from the endoplasmic reticulum, modifies them, and sorts them into vesicles for transport to their final destinations within or outside the cell. Option A is incorrect as protein synthesis occurs on ribosomes. Option C is incorrect as cellular respiration takes place in mitochondria. Option D is incorrect as ATP synthesis is primarily carried out by mitochondria.",
+//     subject: "Biology",
+//     topic: "1",
+//     difficulty: "Medium",
+//   },
+//   {
+//     content:
+//       "A patient presents with difficulty breathing and a persistent cough. A medical examination reveals inflammation of the bronchioles and excessive mucus production. Which of the following respiratory structures is most likely affected in this case?",
+//     options: ["A) Alveoli", "B) Bronchi", "C) Trachea", "D) Larynx"],
+//     correctAnswer: "B",
+//     explanation:
+//       "The bronchioles are the smallest airways in the lungs. Inflammation and excessive mucus production in the bronchioles, as described in the scenario, is characteristic of conditions like bronchitis. The alveoli are the tiny air sacs where gas exchange occurs. The trachea is the windpipe, and the larynx is the voice box. While these structures can also be affected by respiratory illnesses, the symptoms presented in the question point specifically towards bronchiole involvement.",
+//     subject: "1",
+//     topic: "1",
+//     difficulty: "2",
+//   },
+//   {
+//     content:
+//       "A person experiences a sudden loss of sensation and motor control in their left leg. This symptom could indicate damage to which of the following structures?",
+//     options: [
+//       "A) Right cerebral hemisphere",
+//       "B) Left cerebral hemisphere",
+//       "C) Spinal cord",
+//       "D) Peripheral nerves",
+//     ],
+//     correctAnswer: "C",
+//     explanation:
+//       "The spinal cord is responsible for transmitting signals between the brain and the rest of the body. Damage to a specific region of the spinal cord can lead to loss of sensation and motor control in the corresponding body part. In this case, damage to the left side of the spinal cord would affect the right side of the body due to the crossing over of nerve fibers. Option A is incorrect because the right cerebral hemisphere controls the left side of the body, and damage would primarily affect the left side. Option B is incorrect because the left cerebral hemisphere controls the right side of the body, and damage would primarily affect the right side. Option D is incorrect because while peripheral nerves can be damaged, the symptom description points to a more central nervous system involvement.",
+//     subject: "1",
+//     topic: "1",
+//     difficulty: "Medium",
+//   },
+// ];
 
-const test = [
-  {
-      "content": "Which of the following statements correctly describes the function of the Golgi apparatus in a eukaryotic cell?",
-      "options": [
-          "A) It is the site of protein synthesis.",
-          "B) It modifies, sorts, and packages proteins and lipids.",
-          "C) It is responsible for cellular respiration.",
-          "D) It synthesizes ATP, the energy currency of the cell."
-      ],
-      "correctAnswer": "B",
-      "explanation": "The Golgi apparatus is a membrane-bound organelle that functions as a processing and packaging center for proteins and lipids. It receives proteins and lipids from the endoplasmic reticulum, modifies them, and sorts them into vesicles for transport to their final destinations within or outside the cell. Option A is incorrect as protein synthesis occurs on ribosomes. Option C is incorrect as cellular respiration takes place in mitochondria. Option D is incorrect as ATP synthesis is primarily carried out by mitochondria.",
-      "subject": "Biology",
-      "topic": "Cell",
-      "difficulty": "Medium"
-  },
-  {
-      "content": "A patient presents with difficulty breathing and a persistent cough. A medical examination reveals inflammation of the bronchioles and excessive mucus production. Which of the following respiratory structures is most likely affected in this case?",
-      "options": [
-          "A) Alveoli",
-          "B) Bronchi",
-          "C) Trachea",
-          "D) Larynx"
-      ],
-      "correctAnswer": "B",
-      "explanation": "The bronchioles are the smallest airways in the lungs. Inflammation and excessive mucus production in the bronchioles, as described in the scenario, is characteristic of conditions like bronchitis. The alveoli are the tiny air sacs where gas exchange occurs. The trachea is the windpipe, and the larynx is the voice box. While these structures can also be affected by respiratory illnesses, the symptoms presented in the question point specifically towards bronchiole involvement.",
-      "subject": "Biology",
-      "topic": "Anatomy",
-      "difficulty": "Medium"
-  },
-  {
-      "content": "A person experiences a sudden loss of sensation and motor control in their left leg. This symptom could indicate damage to which of the following structures?",
-      "options": [
-          "A) Right cerebral hemisphere",
-          "B) Left cerebral hemisphere",
-          "C) Spinal cord",
-          "D) Peripheral nerves"
-      ],
-      "correctAnswer": "C",
-      "explanation": "The spinal cord is responsible for transmitting signals between the brain and the rest of the body. Damage to a specific region of the spinal cord can lead to loss of sensation and motor control in the corresponding body part. In this case, damage to the left side of the spinal cord would affect the right side of the body due to the crossing over of nerve fibers. Option A is incorrect because the right cerebral hemisphere controls the left side of the body, and damage would primarily affect the left side. Option B is incorrect because the left cerebral hemisphere controls the right side of the body, and damage would primarily affect the right side. Option D is incorrect because while peripheral nerves can be damaged, the symptom description points to a more central nervous system involvement.",
-      "subject": "Biology",
-      "topic": "Anatomy",
-      "difficulty": "Medium"
-  }
-]
+// const userId = 9;
+// const subjectId = 1;
 
- function pushtest (){
+// async function createTestForUser(userId, subjectId, questionsData) {
+//   console.log(
+//     `Creating test for user ID: ${userId} and subject ID: ${subjectId}`
+//   );
 
-  
- }
+//   try {
+//     // Step 1: Create a new Test for the user
+//     const newTest = await prisma.test.create({
+//       data: {
+//         userId,
+//         subjectId,
+//         title: `Test for Subject ${subjectId}`,
+//         submitted: false,
+//         questions: {
+//           create: questionsData.map((q) => ({
+//             question: q.content,
+//             options: q.options,
+//             answer: q.correctAnswer,
+//             explanation: q.explanation,
+//             difficulty: q.difficulty.toUpperCase() || "MEDIUM",
+//             topicId: Number(q.topic),
+//             subjectId,
+//           })),
+//         },
+//       },
+//       include: { questions: true },
+//     });
+
+//     console.log("Test created successfully:", newTest);
+//     return newTest;
+//   } catch (error) {
+//     console.error("Error creating test:", error);
+//     throw new Error("Failed to create test"); // Rethrow error for further handling if needed
+//   }
+// }
+
+// const res = await createTestForUser(userId, subjectId, test);
+// console.log(res);
