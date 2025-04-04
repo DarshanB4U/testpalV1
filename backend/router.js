@@ -112,7 +112,7 @@ userRoutes.post("/signup", async (req, res) => {
 
 // Define the schema for the test parameters
 const testParamSchema = z.object({
-  subject: z.number(), /// innitially the id of subject is given and then later changer into subject topic 
+  subject: z.number(), /// innitially the id of subject is given and then later changer into subject topic
   // topics: z.array(z.number()),
   topics: z.array(z.string()),
   difficulty: z.string(),
@@ -121,8 +121,9 @@ const testParamSchema = z.object({
 });
 
 const genrateBodySchema = z.object({
+  title: z.string(),
   testparam: z.object({
-    subject: z.number(),/// innitially the id of subject is given and then later changer into subject topic 
+    subject: z.number(), /// innitially the id of subject is given and then later changer into subject topic
     topics: z.array(z.string()),
     difficulty: z.string(),
     count: z.number(),
@@ -133,16 +134,25 @@ const genrateBodySchema = z.object({
 // test genrate route
 userRoutes.post("/genrate", authMiddlware, async (req, res) => {
   try {
+    const body = genrateBodySchema.safeParse(req.body);
+    if (!body) {
+      return res.status(500).json({ msg: "invalid input testbody" });
+    }
     const testparam = req.body.testparam;
     const testbody = testParamSchema.safeParse(testparam);
     if (!testbody.success) {
       return res.json({ msg: "invalid input /testparam" });
     }
-    console.log(req.email);
-    res.send(req.email);
-// console.log(req.body.title)
+    // console.log(req.email);
+    console.log("req.body.title=", req.body.title);
+    // console.log(req.body.title)
+    console.log("getting users id by email");
     const userID = await getUserIdByEmail(req.email);
-    generateAndStoreTest(userID,testparam,req.body.title);
+     console.log("got users ID")
+
+
+     
+    generateAndStoreTest(userID, testparam, req.body.title);
   } catch (error) {
     console.log("error accured while genration tests", error);
     res.status(500).json({ msg: "error while genrating  test" });

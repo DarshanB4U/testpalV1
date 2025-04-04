@@ -3,8 +3,9 @@ const prisma = new PrismaClient();
 import { generateQuestions } from "./gemini.js";
 
 //controllers
-   
-async function createTestForUser(userId, subjectId, questionsData,testTitle) {
+
+async function createTestForUser(userId, subjectId, questionsData, testTitle) {
+  console.log(testTitle);
   console.log(
     `Creating test for user ID: ${userId} and subject ID: ${subjectId}`
   );
@@ -15,7 +16,7 @@ async function createTestForUser(userId, subjectId, questionsData,testTitle) {
       data: {
         userId,
         subjectId,
-        title: `${testTitle}`,
+        title: testTitle,
         submitted: false,
         questions: {
           create: questionsData.map((q) => ({
@@ -32,15 +33,13 @@ async function createTestForUser(userId, subjectId, questionsData,testTitle) {
       include: { questions: true },
     });
 
-    console.log("Test created successfully:", newTest);
+    console.log("Test created successfully:");
     return newTest;
   } catch (error) {
     console.error("Error creating test:", error);
     throw new Error("Failed to create test"); // Rethrow error for further handling if needed
   }
 }
-
-
 
 async function getUserIdByEmail(email) {
   try {
@@ -49,37 +48,40 @@ async function getUserIdByEmail(email) {
       select: { id: true }, // Use select instead of include
     });
 
-    return user.id 
+    return user.id;
   } catch (error) {
     console.error("Error fetching user ID:", error);
     throw error;
   }
 }
 
-
 async function generateAndStoreTest(userID, testparams, testTitle) {
   console.log(
     `creatating test for ${userID} of subject id ${testparams.subjects} `
   );
   const subjectId = testparams.subject;
-
+  console.log("getting subject name by ID");
   const subjectName = await getSubjectNameById(subjectId);
-  console.log(`subject  is ${subjectName}`);
+  // console.log(`subject  is ${subjectName}`);
   testparams.subject = subjectName;
-
+  console.log("genrating test question from data usiing AI ");
   const test = await generateQuestions(testparams);
 
-  console.log(test);
-  console.log(
-    "this is genrated questions ___________________________________________________"
-  );
+  console.log("test questions genrated");
 
+  console.log(
+    "converting Topic names into Topic id's to store data in database "
+  );
   const testData = await TopicToId(1, test);
+  console.log("converted topic to ID:   DONE  sucessfully");
 
-  console.log(testData);
-  console.log(
-    "this is changeed topic ___________________________________________________"
-  );
+  // console.log(
+  //   "this is changeed topic ___________________________________________________"
+  // );
+  // console.log(testData);
+  // console.log(
+  //   "this is changeed topic ___________________________________________________"
+  // );
 
   const createdTest = createTestForUser(userID, subjectId, testData, testTitle);
 }
@@ -130,27 +132,38 @@ const getTopics = async function (subjectId) {
 
 // to replace the topic name with the topic id in the question array
 async function TopicToId(subjectid, testQuestionArray) {
-  const topics = await getTopics(subjectid);
-  console.log(topics);
+  try {
+    const topics = await getTopics(subjectid);
+    // console.log(topics);
 
-  // Use map() to transform array
-  const updatedQuestions = testQuestionArray.map((question) => {
-    const foundTopic = topics.find(
-      (topic) => topic.name.toLowerCase() === question.topic.toLowerCase()
-    );
+    // Use map() to transform array
+    const updatedQuestions = testQuestionArray.map((question) => {
+      const foundTopic = topics.find(
+        (topic) => topic.name.toLowerCase() === question.topic.toLowerCase()
+      );
 
-    if (!foundTopic) {
-      console.warn(`Topic '${question.topic}' not found in database!`);
-      return question; // Keep original if no match found
-    }
+      if (!foundTopic) {
+        console.warn(`Topic '${question.topic}' not found in database!`);
+        return question; // Keep original if no match found
+      }
 
-    return {
-      ...question,
-      topic: foundTopic.id, // Replace topic name with ID
-    };
-  });
+      return {
+        ...question,
+        topic: foundTopic.id, // Replace topic name with ID
+      };
+    });
 
-  return updatedQuestions;
+    return updatedQuestions;
+  } catch (error) {
+    console.log("this is error from function : TopicToId ");
+  }
 }
 
-export { getAllSubjectsTopics, getTopics, TopicToId, getUserIdByEmail,getSubjectNameById ,generateAndStoreTest};
+export {
+  getAllSubjectsTopics,
+  getTopics,
+  TopicToId,
+  getUserIdByEmail,
+  getSubjectNameById,
+  generateAndStoreTest,
+};
