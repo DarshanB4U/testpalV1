@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'http://localhost:3000';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -40,14 +40,14 @@ export const authService = {
   register: async (name: string, email: string, password: string) => {
     const response = await api.post('/auth/register', { name, email, password });
     if (response.data.success) {
-      localStorage.setItem('sessionId', response.data.sessionId);
+      localStorage.setItem('bera', response.data.sessionId);
       localStorage.setItem('user', JSON.stringify(response.data.user));
     }
     return response.data;
   },
   
   login: async (email: string, password: string) => {
-    const response = await api.post('/auth/login', { email, password });
+    const response = await api.post('/user/login', { email, password });
     if (response.data.success) {
       localStorage.setItem('sessionId', response.data.sessionId);
       localStorage.setItem('user', JSON.stringify(response.data.user));

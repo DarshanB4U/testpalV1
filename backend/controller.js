@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 import { generateQuestions } from "./gemini.js";
 
+
 //controllers
 
 async function createTestForUser(userId, subjectId, questionsData, testTitle) {
@@ -84,6 +85,8 @@ async function generateAndStoreTest(userID, testparams, testTitle) {
   // );
 
   const createdTest = createTestForUser(userID, subjectId, testData, testTitle);
+
+  return createdTest;
 }
 
 const getSubjectNameById = async function (subjectId) {
@@ -159,11 +162,50 @@ async function TopicToId(subjectid, testQuestionArray) {
   }
 }
 
+
+
+const getTestByID = async (testID) => {
+  const test = await prisma.test.findUnique({
+    where: {
+      id: testID,
+    },
+  });
+  return test;
+};
+const getAllTests = async(userId)=>{
+  const allTests = await prisma.test.findMany({
+    where:{userId:userId},
+    include:{questions:true}
+
+  })
+
+return allTests
+ }
+
+const submitTest = async (testID, UAnswers, score) => {
+  try {
+    const test = await prisma.test.update({
+      where: {
+        id: testID,
+      },
+      data: { score: score, uanswers: UAnswers },
+    });
+    return test;
+  } catch (error) {
+    console.log("unable to submit test problem wit submitTest() function  ");
+  }
+};
+
 export {
+  submitTest,
+  getTestByID,
   getAllSubjectsTopics,
   getTopics,
   TopicToId,
   getUserIdByEmail,
   getSubjectNameById,
   generateAndStoreTest,
+  getAllTests,
+  
+  
 };

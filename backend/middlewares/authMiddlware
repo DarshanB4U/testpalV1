@@ -15,7 +15,7 @@ const authMiddlware = function (req, res, next) {
 
     const decoded = jwt.verify(token, JWT_SECRET);
     req.email = decoded.email;
-    console.log(decoded);
+    // console.log(decoded);
     
 
     // console.log(req.email)

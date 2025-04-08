@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
-import { getSubjectNameById, getUserIdByEmail, TopicToId } from "./controller.js";
+import { getAllTests, getSubjectNameById, getUserIdByEmail, TopicToId } from "./controller.js";
 import { generateQuestions } from "./gemini.js";
 const prisma = new PrismaClient();
 
@@ -185,7 +185,9 @@ const createdTest  = createTestForUser(userID,subjectId,testData,testTitle)
 }
 
 
-
+// const res = await getAllTests(9)
+// console.log(res);
+// console.log(res[1].questions)
 
 //  generateAndStoreTest(9,testparam,testTitle)
 

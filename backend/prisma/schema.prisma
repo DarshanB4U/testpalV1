@@ -25,6 +25,7 @@ model Test {
   score     Int?
   userId    Int
   questions Question[]
+  uanswers    Json       @default("[]")
   subject   Subject    @relation(fields: [subjectId], references: [id])
   user      User       @relation(fields: [userId], references: [id])
 }
@@ -42,7 +43,7 @@ model Question {
   subject     Subject    @relation(fields: [subjectId], references: [id])
   test        Test?      @relation(fields: [testId], references: [id])
   topic       Topic      @relation(fields: [topicId], references: [id])
-  uanswers    Json       @default("[]")
+ 
 }
 
 model Subject {
