@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, BookOpen, Brain, Calendar, FileText, MessageSquare } from 'lucide-react';
+import { Menu, X, BookOpen, Brain, Calendar, FileText, Newspaper } from 'lucide-react';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,6 +19,13 @@ const Navbar = () => {
             <div className="ml-10 flex items-baseline space-x-4">
               <Link to="/" className="px-3 py-2 rounded-md text-sm font-medium hover:bg-orange-600">
                 Home
+              </Link>
+              <Link 
+                to="/generate-paper" 
+                className="px-3 py-2 rounded-md text-sm font-medium hover:bg-orange-600"
+              ><span className='flex items-center'> <Newspaper className='h-4 w-4 mr-1'/>
+                Generate Paper</span>
+             
               </Link>
               <Link to="/daily-practice" className="px-3 py-2 rounded-md text-sm font-medium hover:bg-orange-600">
                 <span className="flex items-center">
@@ -44,6 +51,7 @@ const Navbar = () => {
                   AI Assistant
                 </span>
               </Link>
+           
             </div>
           </div>
           <div className="hidden md:block">

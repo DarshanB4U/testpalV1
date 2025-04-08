@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, Clock, CheckCircle, BarChart2, BookOpen, Brain, Award } from 'lucide-react';
 

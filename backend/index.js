@@ -1,7 +1,9 @@
 import express from "express";
 import userRoutes from "./router.js";
 const app = express();
-const PORT = 3000;
+const PORT = 5000;
+import cors from "cors";
+app.use(cors());
 
 app.use(express.json()); // Middleware to parse JSON
 

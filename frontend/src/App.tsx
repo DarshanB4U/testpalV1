@@ -1,4 +1,4 @@
-import React from 'react';
+// import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -12,6 +12,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import CustomTest from './pages/CustomTest';
 import ProtectedRoute from './components/ProtectedRoute';
+import GeneratePaper from './pages/GeneratePaper.jsx';
 
 function App() {
   return (
@@ -40,11 +41,11 @@ function App() {
                 <BookQuestions />
               </ProtectedRoute>
             } />
-            <Route path="/ai-assistant" element={
+            {/* <Route path="/ai-assistant" element={
               <ProtectedRoute>
                 <AiAssistant />
               </ProtectedRoute>
-            } />
+            } /> */}
             <Route path="/dashboard" element={
               <ProtectedRoute>
                 <Dashboard />
@@ -54,6 +55,12 @@ function App() {
               <ProtectedRoute>
                 <CustomTest />
               </ProtectedRoute>
+            } />
+            
+            <Route path="/generate-paper" element={
+              
+                <GeneratePaper />
+              
             } />
           </Routes>
         </main>

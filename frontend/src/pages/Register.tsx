@@ -236,7 +236,7 @@ const Register = () => {
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-300" />
               </div>
-              <div className="relative flex justify-center text-sm">
+              {/* <div className="relative flex justify-center text-sm">
                 <span className="px-2 bg-white text-gray-500">
                   Or continue with
                 </span>
@@ -264,7 +264,7 @@ const Register = () => {
                     <path fillRule="evenodd" d="M10 0C4.477 0 0 4.477 0 10c0 5.523 4.477 10 10 10 5.523 0 10-4.477 10-10 0-5.523-4.477-10-10-10zm-1.143 15.714h-1.9V8.571h1.9v7.143zm-.95-8.303c-.673 0-1.092-.45-1.092-1.01 0-.573.432-1.01 1.092-1.01.66 0 1.092.437 1.092 1.01 0 .56-.432 1.01-1.092 1.01zm8.093 8.303h-1.9v-3.83c0-.776-.278-1.304-1.01-1.304-.556 0-.873.37-.873.73-.033.2 0 .39 0 .59v3.814h-1.9s.025-6.177 0-6.82h1.9v.964c.234-.463.65-.927 1.576-.927 1.15 0 2.007.758 2.007 2.384v4.4z" clipRule="evenodd" />
                   </svg>
                 </a>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

@@ -38,7 +38,7 @@ const loginDataSchema = z.object({
   password: z.string(),
 });
 //login route
-userRoutes.get("/login", async (req, res) => {
+userRoutes.post("/login", async (req, res) => {
   try {
     const logindata = req.body;
     const validatedBody = loginDataSchema.safeParse(logindata);
@@ -58,7 +58,7 @@ userRoutes.get("/login", async (req, res) => {
 
     const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET);
 
-    return res.status(200).json({ msg: "Login successful", token });
+    return res.status(200).json({ msg: "Login successful", token ,username:user.name});
   } catch (error) {
     console.log("error while loggin in ", error);
     return res.status(500).json({ msg: "error while logging in " });
@@ -108,7 +108,10 @@ userRoutes.post("/signup", async (req, res) => {
     const token = jwt.sign({ email: response.email }, JWT_SECRET);
     //  console.log("this is email from database ",response.email ,typeof(response.email));  //this was to check type of emaild
 
-    return res.status(200).json({ token: token });
+    return res.status(200).json({ token: token,
+      msg: "signup sucessful",
+      username:response.name,
+     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ msg: "error in signup " });
