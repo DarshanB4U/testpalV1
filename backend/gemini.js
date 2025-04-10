@@ -51,9 +51,16 @@ function buildPromptWithContext(
 Generate ${count} number of  ${difficulty}-level multiple-choice questions specifically for NEET (National Eligibility cum Entrance Test) exam preparation on ${subject} covering these topics: ${topics.join(
     ", "
   )}.
+    
+  make sure the name of the topics remain as it is provided for examples - "Structural Organisation in Animals and Plants" question in this category shuld not be in two different categories like -"Structural Organisation in Animals" And "Structural Organisation in Plants"
+  ot shud be as it ,
+
+  also make sure to genrate exact numner of questions
+
 ${additionalContext ? `Additional context: ${additionalContext}` : ""}
 
 Important NEET-specific guidelines:
+- T
 - Questions should match the exact NEET exam pattern and difficulty level
 - Focus on conceptual understanding rather than rote memorization
 - Include questions that test application of concepts in theoretical scenarios
@@ -136,4 +143,3 @@ export { generateQuestions, generateQuestionsWithContext };
 
 // // const { GoogleGenerativeAI } = require("@google/generative-ai");
 // // import GoogleGenerativeAI from "@google/genai"
-

@@ -2,7 +2,6 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 import { generateQuestions } from "./gemini.js";
 
-
 //controllers
 
 async function createTestForUser(userId, subjectId, questionsData, testTitle) {
@@ -10,7 +9,7 @@ async function createTestForUser(userId, subjectId, questionsData, testTitle) {
   console.log(
     `Creating test for user ID: ${userId} and subject ID: ${subjectId}`
   );
-
+  
   try {
     // Step 1: Create a new Test for the user
     const newTest = await prisma.test.create({
@@ -58,13 +57,14 @@ async function getUserIdByEmail(email) {
 
 async function generateAndStoreTest(userID, testparams, testTitle) {
   console.log(
-    `creatating test for ${userID} of subject id ${testparams.subjects} `
+    `creatating test for ${userID} of subject id ${testparams.subject} `
   );
   const subjectId = testparams.subject;
   console.log("getting subject name by ID");
   const subjectName = await getSubjectNameById(subjectId);
   // console.log(`subject  is ${subjectName}`);
   testparams.subject = subjectName;
+  // console.log("this are test params ",testparams)
   console.log("genrating test question from data usiing AI ");
   const test = await generateQuestions(testparams);
 
@@ -73,7 +73,8 @@ async function generateAndStoreTest(userID, testparams, testTitle) {
   console.log(
     "converting Topic names into Topic id's to store data in database "
   );
-  const testData = await TopicToId(1, test);
+  console.log("this is subject id ", subjectId);
+  const testData = await TopicToId(subjectId, test);
   console.log("converted topic to ID:   DONE  sucessfully");
 
   // console.log(
@@ -83,7 +84,7 @@ async function generateAndStoreTest(userID, testparams, testTitle) {
   // console.log(
   //   "this is changeed topic ___________________________________________________"
   // );
-
+console.log("this test0012", testData)
   const createdTest = createTestForUser(userID, subjectId, testData, testTitle);
 
   return createdTest;
@@ -136,17 +137,20 @@ const getTopics = async function (subjectId) {
 // to replace the topic name with the topic id in the question array
 async function TopicToId(subjectid, testQuestionArray) {
   try {
+    console.log("these are topic sub id ", subjectid);
     const topics = await getTopics(subjectid);
+    // console.log("these are topic found in db ", topics);
     // console.log(topics);
 
     // Use map() to transform array
     const updatedQuestions = testQuestionArray.map((question) => {
       const foundTopic = topics.find(
-        (topic) => topic.name.toLowerCase() === question.topic.toLowerCase()
+        (topic) => topic.name.toLowerCase() == question.topic.toLowerCase()
       );
 
       if (!foundTopic) {
         console.warn(`Topic '${question.topic}' not found in database!`);
+
         return question; // Keep original if no match found
       }
 
@@ -162,8 +166,6 @@ async function TopicToId(subjectid, testQuestionArray) {
   }
 }
 
-
-
 const getTestByID = async (testID) => {
   const test = await prisma.test.findUnique({
     where: {
@@ -172,15 +174,14 @@ const getTestByID = async (testID) => {
   });
   return test;
 };
-const getAllTests = async(userId)=>{
+const getAllTests = async (userId) => {
   const allTests = await prisma.test.findMany({
-    where:{userId:userId},
-    include:{questions:true}
+    where: { userId: userId },
+    include: { questions: true },
+  });
 
-  })
-
-return allTests
- }
+  return allTests;
+};
 
 const submitTest = async (testID, UAnswers, score) => {
   try {
@@ -188,7 +189,7 @@ const submitTest = async (testID, UAnswers, score) => {
       where: {
         id: testID,
       },
-      data: { score: score, uanswers: UAnswers },
+      data: { score:score, uanswers: UAnswers, submitted: true },
     });
     return test;
   } catch (error) {
@@ -206,6 +207,4 @@ export {
   getSubjectNameById,
   generateAndStoreTest,
   getAllTests,
-  
-  
 };

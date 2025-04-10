@@ -58,7 +58,9 @@ userRoutes.post("/login", async (req, res) => {
 
     const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET);
 
-    return res.status(200).json({ msg: "Login successful", token ,username:user.name});
+    return res
+      .status(200)
+      .json({ msg: "Login successful", token, username: user.name });
   } catch (error) {
     console.log("error while loggin in ", error);
     return res.status(500).json({ msg: "error while logging in " });
@@ -108,10 +110,9 @@ userRoutes.post("/signup", async (req, res) => {
     const token = jwt.sign({ email: response.email }, JWT_SECRET);
     //  console.log("this is email from database ",response.email ,typeof(response.email));  //this was to check type of emaild
 
-    return res.status(200).json({ token: token,
-      msg: "signup sucessful",
-      username:response.name,
-     });
+    return res
+      .status(200)
+      .json({ token: token, msg: "signup sucessful", username: response.name });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ msg: "error in signup " });
@@ -171,7 +172,7 @@ userRoutes.post("/genrate", authMiddlware, async (req, res) => {
 const submitTestSchemaBody = z.object({
   testId: z.number(),
   userAnswer: z.array(z.string()),
-  testsSchore: z.number(),
+  testScore: z.number(),
 });
 
 // route for submmit attempted test
@@ -182,10 +183,13 @@ userRoutes.post("/submitTest", authMiddlware, async (req, res) => {
       return req.status(500).json({ msg: "invalid test body/schema " });
     }
     const userID = await getUserIdByEmail(req.email);
-    const [testId, userAnswer, testScore] = req.body;
+    const { testId, userAnswer, testScore } = req.body;
 
+    const score = Math.floor(testScore);
     // console.log(userID);
-    const submit = submitTest(testId, userAnswer, testScore);
+    const submit = await submitTest(testId, userAnswer, score);
+    console.log("this is submit ", submit);
+
     res.json({ msg: "sucess" });
   } catch (error) {
     console.log(error);
@@ -195,9 +199,13 @@ userRoutes.post("/submitTest", authMiddlware, async (req, res) => {
 
 userRoutes.get("/getAllTests", authMiddlware, async (req, res) => {
   try {
+    console.log("getting all the test details");
     const userId = await getUserIdByEmail(req.email);
+    console.log("this is userid", userId);
     const allTests = await getAllTests(userId);
     res.status(200).json(allTests);
+    console.log("all the test details are fetched");
+    console.log(allTests);
   } catch (error) {
     console.log(
       'error for getting all the tests with "/getAllTest" route ',
