@@ -1,6 +1,8 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000";
+
+const API_URL = process.env.REACT_APP_BACKEND_URL;
+;
 
 const api = axios.create({
   baseURL: API_URL,
@@ -96,7 +98,7 @@ export const questionService = {
     return response.data;
   },
   getAllTest: async () => {
-    const response  = await api.get('/uers/getAllTests')
+    const response = await api.get("/uers/getAllTests");
   },
   submitTest: async (testId: number, answers: any, score: number) => {
     const response = await api.post("/users/submitTest", {
