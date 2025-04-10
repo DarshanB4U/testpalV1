@@ -113,14 +113,15 @@ const Navbar = () => {
               Home
             </Link>
             <Link
-              to="/daily-practice"
-              className="block px-3 py-2 rounded-md text-base font-medium hover:bg-orange-600"
-            >
-              <span className="flex items-center">
-                <Calendar className="h-4 w-4 mr-1" />
-                Daily Practice
-              </span>
-            </Link>
+                to="/generate-paper"
+                className="px-3 py-2 rounded-md text-sm font-medium hover:bg-orange-600"
+              >
+                <span className="flex items-center">
+                  {" "}
+                  <Newspaper className="h-4 w-4 mr-1" />
+                  Generate Paper
+                </span>
+              </Link>
             <Link
               to="/previous-years"
               className="block px-3 py-2 rounded-md text-base font-medium hover:bg-orange-600"
@@ -139,15 +140,7 @@ const Navbar = () => {
                 Book Questions
               </span>
             </Link>
-            <Link
-              to="/ai-assistant"
-              className="block px-3 py-2 rounded-md text-base font-medium hover:bg-orange-600"
-            >
-              <span className="flex items-center">
-                <Brain className="h-4 w-4 mr-1" />
-                AI Assistant
-              </span>
-            </Link>
+           
           </div>
           <div className="pt-4 pb-3 border-t border-indigo-500">
             <div className="px-2 space-y-1">
