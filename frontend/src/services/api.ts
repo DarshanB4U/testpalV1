@@ -38,15 +38,18 @@ api.interceptors.request.use(
 // );
 
 // Auth services
+// Add this method to your authService
 export const authService = {
   register: async (name: string, email: string, password: string) => {
-    const response = await api.post("/user/register", {
+    const response = await api.post("/users/signup", {
       name,
       email,
       password,
     });
-    if (response.data.msg) {
-      localStorage.setItem("berar", response.data.sessionId);
+    if (response.data.msg== "signup sucessful") {
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("username", response.data.username);
+
     }
     return response.data;
   },
@@ -74,6 +77,20 @@ export const authService = {
     const response = await api.get("/users/getAllTests");
     console.log(response);
     return response.data;
+  },
+  
+  getTestById: async (testId) => {
+    try {
+      const response = await api.get(`users/getTestByID/${testId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching test details:', error);
+      throw error;
+    }
   },
 };
 

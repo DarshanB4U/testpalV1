@@ -3,8 +3,10 @@ import TestHeader from '../components/TestHeader';
 import QuestionCard from '../components/QuestionCard';
 import { questionService } from '../services/api';
 import FetchingTestLoading from '../components/FetchingTestLoading';
+import TealButton from '../components/TealButton';
 
 function Submit() {
+  const [dbStored,setDbStored]= useState(false)
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [testData, setTestData] = useState(null);
   const [userAnswers, setUserAnswers] = useState([]);
@@ -78,6 +80,7 @@ function Submit() {
   };
 
   const handleSubmit = () => {
+   
     const formatted = userAnswers.map((answerIndex, questionIndex) => {
       if (answerIndex === null) return "Not answered";
       return testData.questions[questionIndex].options[answerIndex];
@@ -95,13 +98,14 @@ function Submit() {
     const score= result.score;
     const answresArray = formatted;
   async function submittest(){
+    setDbStored(false)
    const response = await  questionService.submitTest(tesID,answresArray,score);
    console.log(response);
-    
+   setDbStored(true)
     
   }
    submittest();
-   
+ 
 
 
   };
@@ -163,6 +167,7 @@ function Submit() {
           >
             Previous
           </button>
+          {dbStored&&<TealButton text={"Go-to Dashboard"}></TealButton>}
 
           {currentQuestion === testData.questions.length - 1 ? (
             <button

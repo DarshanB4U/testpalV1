@@ -177,7 +177,9 @@ const getTestByID = async (testID) => {
 const getAllTests = async (userId) => {
   const allTests = await prisma.test.findMany({
     where: { userId: userId },
-    include: { questions: true },
+    include: { questions: false,
+      uanswers:false
+     },
   });
 
   return allTests;

@@ -76,7 +76,7 @@ const signupSchema = z.object({
 
 // signup route
 userRoutes.post("/signup", async (req, res) => {
-  const signuupData = req.body.userCred;
+  const signuupData = req.body;
 
   // to validate using zod
   const validatedBody = signupSchema.safeParse(signuupData);
@@ -274,6 +274,24 @@ userRoutes.post("/genratewithcontext", async (req, res) => {
     res.status(500).json({ msg: "error while genrating  test" });
   }
 });
+userRoutes.get("/getTestByID/:testID", authMiddlware, async (req, res) => {
+  try {
+    const testID = req.params.testID;
+    console.log(testID)
+    const test = await prisma.test.findUnique({
+      where: {
+        id: parseInt(testID),
+      },
+      include: { questions: true,
+       },
+    }); 
+    res.status(200).json({ test });
+  } 
+  catch (error) {
+    console.log("error while getting test by id ", error);
+    res.status(500).json({ msg: "error while getting test by id " });
+  }
+})
 
 userRoutes.get("/protected", authMiddlware, (req, res) => {
   res.send("this is protected route and and you are athorised ");

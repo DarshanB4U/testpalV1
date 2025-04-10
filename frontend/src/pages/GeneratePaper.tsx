@@ -3,6 +3,7 @@ import axios from "axios";
 import { questionService } from "../services/api";
 import { useNavigate } from "react-router-dom";
 import TestGenerationLoader from "../components/loading";
+import { Brain } from "lucide-react";
 
 const subjectsData = {
   "1": [
@@ -128,14 +129,18 @@ const GeneratePaper = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
       <div className="bg-white rounded-lg shadow-lg p-6">
-        <h1 className="text-2xl font-bold text-teal-700 mb-6">
-          Generate Custom Paper
+        <h1 className="text-2xl flex  font-bold text-teal-800 mb-6">
+        <span className="flex items-center">
+            <Brain className="h-6 w-6 mr-1" />
+          </span>
+          Generate Paper {"  "}
+          
         </h1>
 
         <div className="space-y-6">
           {/* Add title field before the grid */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-md font-medium text-gray-700 mb-2">
               Paper Title
             </label>
             <input
@@ -150,7 +155,7 @@ const GeneratePaper = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-md font-medium text-gray-700 mb-2">
                 Subject
               </label>
               <select
@@ -166,7 +171,7 @@ const GeneratePaper = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-md font-medium text-gray-700 mb-2">
                 Difficulty
               </label>
               <select
@@ -182,7 +187,7 @@ const GeneratePaper = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-md font-medium text-gray-700 mb-2">
                 Questions
               </label>
               <input

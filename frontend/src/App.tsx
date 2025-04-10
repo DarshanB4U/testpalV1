@@ -21,10 +21,11 @@ function App() {
   return (
     <Router>
       <div className="flex flex-col min-h-screen bg-gray-50">
+        
         <Navbar />
         <main className="flex-grow">
           <Routes>
-            <Route path="/test" element={<Test />}></Route>
+
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
@@ -38,27 +39,9 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="/previous-years"
-              element={
-                <ProtectedRoute>
-                  <PreviousYears />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/book-questions"
-              element={
-                <ProtectedRoute>
-                  <BookQuestions />
-                </ProtectedRoute>
-              }
-            />
-            {/* <Route path="/ai-assistant" element={
-              <ProtectedRoute>
-                <AiAssistant />
-              </ProtectedRoute>
-            } /> */}
+           
+          
+           
             <Route
               path="/dashboard"
               element={
@@ -67,17 +50,10 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="/custom-test"
-              element={
-                <ProtectedRoute>
-                  <CustomTest />
-                </ProtectedRoute>
-              }
-            />
 
-            <Route path="/generate-paper" element={<GeneratePaper />} />
-            <Route path="/submit-test" element={<Submit></Submit>} />
+
+            <Route path="/generate-paper" element={<ProtectedRoute><GeneratePaper /></ProtectedRoute>} />
+            <Route path="/submit-test" element={<ProtectedRoute><Submit></Submit></ProtectedRoute>} />
           </Routes>
         </main>
         <Footer />
