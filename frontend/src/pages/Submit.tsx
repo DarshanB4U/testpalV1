@@ -61,22 +61,41 @@ function Submit() {
 
     userAnswers.forEach((answerIndex, questionIndex) => {
       const question = testData.questions[questionIndex];
-      const userAnswer = answerIndex !== null ? String.fromCharCode(65 + answerIndex) : null;
       
-      if (userAnswer === question.answer) {
+      // If no answer was selected
+      if (answerIndex === null) {
+        wrong.push({
+          questionNumber: questionIndex + 1,
+          question: question.question,
+          userAnswer: 'Not answered',
+          correctAnswer: question.options[question.answer.charCodeAt(0) - 65],
+          explanation: question.explanation
+        });
+        return; // Skip to next question
+      }
+
+      // Convert correct answer letter to index (0-3)
+      const correctAnswerIndex = question.answer.charCodeAt(0) - 65;
+      console.log("Question", questionIndex + 1, "User answer:", answerIndex, "Correct answer:", correctAnswerIndex); // Debug log
+
+      // Compare indices directly
+      if (answerIndex === correctAnswerIndex) {
         correctCount++;
       } else {
         wrong.push({
           questionNumber: questionIndex + 1,
           question: question.question,
-          userAnswer: userAnswer ? question.options[answerIndex] : 'Not answered',
-          correctAnswer: question.options[question.answer.charCodeAt(0) - 65],
+          userAnswer: question.options[answerIndex],
+          correctAnswer: question.options[correctAnswerIndex],
           explanation: question.explanation
         });
       }
     });
 
-    return { score: (correctCount / testData.questions.length) * 100, wrongAnswers: wrong };
+    // Calculate final score
+    const finalScore = Math.round((correctCount / testData.questions.length) * 100);
+    console.log("Total correct:", correctCount, "Total questions:", testData.questions.length, "Score:", finalScore); // Debug log
+    return { score: finalScore, wrongAnswers: wrong };
   };
 
   const handleSubmit = () => {
@@ -110,11 +129,58 @@ function Submit() {
 
   };
 
+  // First, modify handleAnswerSelect to store the actual index (0-3)
   const handleAnswerSelect = (answerIndex) => {
     if (isSubmitted) return;
     const newAnswers = [...userAnswers];
+    // Store the index directly (0 for A, 1 for B, etc.)
     newAnswers[currentQuestion] = answerIndex;
     setUserAnswers(newAnswers);
+    console.log("Selected answer index:", answerIndex); // Debug log
+  };
+
+  // Then, modify calculateScore to correctly compare answers
+  const calculateScore = () => {
+    let correctCount = 0;
+    const wrong = [];
+
+    userAnswers.forEach((answerIndex, questionIndex) => {
+      const question = testData.questions[questionIndex];
+      
+      // If no answer was selected
+      if (answerIndex === null) {
+        wrong.push({
+          questionNumber: questionIndex + 1,
+          question: question.question,
+          userAnswer: 'Not answered',
+          correctAnswer: question.options[question.answer.charCodeAt(0) - 65],
+          explanation: question.explanation
+        });
+        return; // Skip to next question
+      }
+
+      // Convert correct answer letter to index (0-3)
+      const correctAnswerIndex = question.answer.charCodeAt(0) - 65;
+      console.log("Question", questionIndex + 1, "User answer:", answerIndex, "Correct answer:", correctAnswerIndex); // Debug log
+
+      // Compare indices directly
+      if (answerIndex === correctAnswerIndex) {
+        correctCount++;
+      } else {
+        wrong.push({
+          questionNumber: questionIndex + 1,
+          question: question.question,
+          userAnswer: question.options[answerIndex],
+          correctAnswer: question.options[correctAnswerIndex],
+          explanation: question.explanation
+        });
+      }
+    });
+
+    // Calculate final score
+    const finalScore = Math.round((correctCount / testData.questions.length) * 100);
+    console.log("Total correct:", correctCount, "Total questions:", testData.questions.length, "Score:", finalScore); // Debug log
+    return { score: finalScore, wrongAnswers: wrong };
   };
 
   const handleNext = () => {
