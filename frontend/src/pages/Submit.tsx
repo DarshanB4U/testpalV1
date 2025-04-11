@@ -139,49 +139,49 @@ function Submit() {
     console.log("Selected answer index:", answerIndex); // Debug log
   };
 
-  // Then, modify calculateScore to correctly compare answers
-  const calculateScore = () => {
-    let correctCount = 0;
-    const wrong = [];
+  // // Then, modify calculateScore to correctly compare answers
+  // const calculateScore = () => {
+  //   let correctCount = 0;
+  //   const wrong = [];
 
-    userAnswers.forEach((answerIndex, questionIndex) => {
-      const question = testData.questions[questionIndex];
+  //   userAnswers.forEach((answerIndex, questionIndex) => {
+  //     const question = testData.questions[questionIndex];
       
-      // If no answer was selected
-      if (answerIndex === null) {
-        wrong.push({
-          questionNumber: questionIndex + 1,
-          question: question.question,
-          userAnswer: 'Not answered',
-          correctAnswer: question.options[question.answer.charCodeAt(0) - 65],
-          explanation: question.explanation
-        });
-        return; // Skip to next question
-      }
+  //     // If no answer was selected
+  //     if (answerIndex === null) {
+  //       wrong.push({
+  //         questionNumber: questionIndex + 1,
+  //         question: question.question,
+  //         userAnswer: 'Not answered',
+  //         correctAnswer: question.options[question.answer.charCodeAt(0) - 65],
+  //         explanation: question.explanation
+  //       });
+  //       return; // Skip to next question
+  //     }
 
-      // Convert correct answer letter to index (0-3)
-      const correctAnswerIndex = question.answer.charCodeAt(0) - 65;
-      console.log("Question", questionIndex + 1, "User answer:", answerIndex, "Correct answer:", correctAnswerIndex); // Debug log
+  //     // Convert correct answer letter to index (0-3)
+  //     const correctAnswerIndex = question.answer.charCodeAt(0) - 65;
+  //     console.log("Question", questionIndex + 1, "User answer:", answerIndex, "Correct answer:", correctAnswerIndex); // Debug log
 
-      // Compare indices directly
-      if (answerIndex === correctAnswerIndex) {
-        correctCount++;
-      } else {
-        wrong.push({
-          questionNumber: questionIndex + 1,
-          question: question.question,
-          userAnswer: question.options[answerIndex],
-          correctAnswer: question.options[correctAnswerIndex],
-          explanation: question.explanation
-        });
-      }
-    });
+  //     // Compare indices directly
+  //     if (answerIndex === correctAnswerIndex) {
+  //       correctCount++;
+  //     } else {
+  //       wrong.push({
+  //         questionNumber: questionIndex + 1,
+  //         question: question.question,
+  //         userAnswer: question.options[answerIndex],
+  //         correctAnswer: question.options[correctAnswerIndex],
+  //         explanation: question.explanation
+  //       });
+  //     }
+  //   });
 
-    // Calculate final score
-    const finalScore = Math.round((correctCount / testData.questions.length) * 100);
-    console.log("Total correct:", correctCount, "Total questions:", testData.questions.length, "Score:", finalScore); // Debug log
-    return { score: finalScore, wrongAnswers: wrong };
-  };
+  //   // Calculate final score
+  //   const finalScore = Math.round((correctCount / testData.questions.length) * 100);
+  //   console.log("Total correct:", correctCount, "Total questions:", testData.questions.length, "Score:", finalScore); // Debug log
+  //   return { score: finalScore, wrongAnswers: wrong };
+  // };
 
   const handleNext = () => {
     if (currentQuestion < testData.questions.length - 1) {
