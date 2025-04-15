@@ -82,21 +82,6 @@ cd backend
 node index.js
 ```
 
-testpal/
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── services/
-│   │   └── hooks/
-│   └── public/
-└── backend/
-    ├── prisma/
-    ├── controllers/
-    ├── middlewares/
-    └── routes/
-
-
 
 This README provides a comprehensive overview of your project, including:
 - Project description
