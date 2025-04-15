@@ -82,6 +82,11 @@ cd backend
 node index.js
 ```
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 1b75cdb77b01a8bb9e3cf6cf5c3f6b37bf5d24b3
 
 This README provides a comprehensive overview of your project, including:
 - Project description
