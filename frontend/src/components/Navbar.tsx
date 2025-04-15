@@ -13,7 +13,7 @@ import {
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { isLoggedIn, setIsLoggedI } = useContext(AuthContext);
+  const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
   // true if token exisis
 
   //  useEffect(()=>{
