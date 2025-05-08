@@ -326,8 +326,8 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Past Tests section */}
-        {/* Add this new section for past tests */}
+          {/* Past Tests section div*/}
+
         <div className="bg-white rounded-lg shadow-md p-6 mt-8">
           <h2 className="text-xl font-bold text-gray-900 mb-4">Past Tests</h2>
           <div className="overflow-x-auto">
