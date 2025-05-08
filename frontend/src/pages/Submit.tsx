@@ -5,6 +5,8 @@ import { questionService } from '../services/api';
 import FetchingTestLoading from '../components/FetchingTestLoading';
 import TealButton from '../components/TealButton';
 
+
+
 function Submit() {
   const [dbStored,setDbStored]= useState(false)
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -31,7 +33,7 @@ function Submit() {
         if (questionCount > 20) minutes = 50;
         
         setTimeLeft(minutes * 60); // Convert minutes to seconds
-        setUserAnswers(new Array(response.test.questions.length).fill(null));
+        setUserAnswers(new Array(response.test.questions.length).fill(null) as (number | null)[]);
       } catch (error) {
         console.error('Error fetching test:', error);
       }
@@ -57,7 +59,7 @@ function Submit() {
 
   const calculateScore = () => {
     let correctCount = 0;
-    const wrong = [];
+    const wrong:any = [];
 
     userAnswers.forEach((answerIndex, questionIndex) => {
       const question = testData.questions[questionIndex];

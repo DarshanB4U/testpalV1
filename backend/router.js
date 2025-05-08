@@ -293,6 +293,25 @@ userRoutes.get("/getTestByID/:testID", authMiddlware, async (req, res) => {
   }
 })
 
+userRoutes.get("/getQuestionsAttempted",authMiddlware,async(req,res)=>{
+  try {
+    const userID = await getUserIdByEmail(req.email);
+    const questions = await prisma.question.count({
+      where:{
+        test:{
+          userId:userID,
+          submitted:true
+        }
+      }
+    })
+    res.status(200).json({questions})
+    
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({msg:"error while getting questions attempted by user"})
+  }
+})
+
 userRoutes.get("/protected", authMiddlware, (req, res) => {
   res.send("this is protected route and and you are athorised ");
 });

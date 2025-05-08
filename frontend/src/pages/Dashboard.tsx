@@ -1,8 +1,30 @@
-import { useEffect, useState } from "react";
-import LoadingPopup from "../components/LoadingPopup";
-import { Link } from "react-router-dom";
-import { Calendar, Clock, CheckCircle, BarChart2 } from "lucide-react";
-import { authService } from "../services/api";
+import React, { useState, useEffect } from 'react';
+import { Calendar, CheckCircle, BarChart2, Clock } from 'lucide-react';
+import { authService, questionService } from '../services/api';
+import LoadingPopup from '../components/LoadingPopup';
+import { Line } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js';
+
+
+// Register ChartJS components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(false);
@@ -10,6 +32,8 @@ const Dashboard = () => {
   const [userData, setUserData] = useState({
     questionsAttempted: 0,
     accuracy: 0,
+    testAttempted: 0,
+    streak:0
   });
   const [pastTests, setPastTests] = useState([]);
   const [selectedTest, setSelectedTest] = useState(null);
@@ -38,40 +62,131 @@ const Dashboard = () => {
     }
   };
 
+  const [chartData, setChartData] = useState({
+    labels: [],
+    datasets: []
+  });
+
   useEffect(() => {
     console.log("Dashboard mounted ✅");
     const name = localStorage.getItem("username");
     
     const fetchtests = async () => {
-     
       const tests = await authService.getAllTests();
       // Sort tests by creation date in descending order
       const sortedTests = tests.sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        (a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       );
       setPastTests(sortedTests);
-      const totalschore = function getscore(testarray: any) {
-        let numberofquestions = 0;
-        let score = 0;
 
-        for (let i = 0; i < testarray.length; i++) {
-          score += testarray[i].score;
-          numberofquestions += testarray[i].questions.length;
+      // Calculate total questions and accuracy
+      let totalQuestions = 0;
+      let totalCorrect = 0;
+
+      // Group tests by subject
+      const physicsTests = sortedTests.filter(test => test.subjectId === 1);
+      const chemistryTests = sortedTests.filter(test => test.subjectId === 2);
+      const biologyTests = sortedTests.filter(test => test.subjectId === 3);
+    
+
+      const totalTetsNo=tests.length
+      console.log(totalTetsNo)
+
+      function calculateStreak(tests) {
+        const today = new Date().toISOString().slice(0, 10); // 'YYYY-MM-DD'
+        console.log()
+        const datesSet = new Set(
+          tests.map(test => new Date(test.createdAt).toISOString().slice(0, 10))
+        );
+      
+        let streak = 0;
+        let currentDate = new Date(today);
+      
+        while (datesSet.has(currentDate.toISOString().slice(0, 10))) {
+          streak++;
+          currentDate.setDate(currentDate.getDate() - 1);
         }
-        const marks = [score, numberofquestions];
-        return marks;
-      };
-      const score = totalschore(tests);
-
-      function percentage(partialValue: number, totalValue: number) {
-        return Math.floor((100 * partialValue) / totalValue);
+      
+        return streak;
       }
-      const accuracy = percentage(score[0], score[1]);
+      // Calculate streak
+      const streak = calculateStreak(tests);
+      // console.log("streak",streak)     
+       
 
+      function getAccuracy(tests){
+        let score=0;
+        let testAttempted=0
+        
+        for(let i = 0; i < tests.length; i++) {
+          const test = tests[i]
+         
+          if (test.score) {
+            testAttempted+=1;
+            score+=test.score
+            
+            
+          }
+        }
+        let allTestScore=testAttempted*100
+
+        let accuracy = testAttempted > 0 ? Math.floor((score / allTestScore) * 100) : 0;
+        return {accuracy,testAttempted}
+        
+        
+      }
+      
+     const accuracy = getAccuracy(tests)
+      console.log("accuracy",accuracy)
+     
+      // tests.forEach(test => {
+      //   if (test.score) {
+
+      //     totalCorrect += Math.floor((test.score * test.questions.length) / 100);
+      //   }
+      // });
+
+      // const accuracy = totalQuestions > 0 ? Math.floor((totalCorrect / totalQuestions) * 100) : 0;
+  const qNO = await questionService.attemptedQuestions()
+  console.log(qNO)
       setUserData({
-        questionsAttempted: score[1],
-        accuracy: accuracy,
+        questionsAttempted: qNO.questions,
+        accuracy: accuracy.accuracy,
+        testAttempted:accuracy.testAttempted,
+        streak:streak
+      }); 
+
+      // Get last 5 tests for each subject
+      const lastPhysics = physicsTests.slice(0, 5).reverse();
+      const lastChemistry = chemistryTests.slice(0, 5).reverse();
+      const lastBiology = biologyTests.slice(0, 5).reverse();
+
+      // Prepare chart data with multiple datasets
+      setChartData({
+        labels: lastPhysics.map(test => new Date(test.createdAt).toLocaleDateString()),
+        datasets: [
+          {
+            label: 'Physics',
+            data: lastPhysics.map(test => test.score),
+            borderColor: 'rgb(239, 68, 68)',
+            backgroundColor: 'rgba(239, 68, 68, 0.5)',
+            tension: 0.4
+          },
+          {
+            label: 'Chemistry',
+            data: lastChemistry.map(test => test.score),
+            borderColor: 'rgb(16, 185, 129)',
+            backgroundColor: 'rgba(16, 185, 129, 0.5)',
+            tension: 0.4
+          },
+          {
+            label: 'Biology',
+            data: lastBiology.map(test => test.score),
+            borderColor: 'rgb(59, 130, 246)',
+            backgroundColor: 'rgba(59, 130, 246, 0.5)',
+            tension: 0.4
+          }
+        ]
       });
     };
 
@@ -120,8 +235,8 @@ const Dashboard = () => {
                   <Calendar className="h-6 w-6 text-teal-700" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Daily Streak</p>
-                  <p className="text-2xl font-bold text-gray-900">{} days</p>
+                  <p className="text-sm text-gray-500">Total Test</p>
+                  <p className="text-2xl font-bold text-gray-900">{userData.testAttempted} Attempted </p>
                 </div>
               </div>
             </div>
@@ -160,13 +275,58 @@ const Dashboard = () => {
                   <Clock className="h-6 w-6 text-purple-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Last Session</p>
-                  <p className="text-2xl font-bold text-gray-900">Today</p>
+                  <p className="text-sm text-gray-500">Streak</p>
+                  <p className="text-2xl font-bold text-gray-900">{userData.streak} Days</p>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+          </div>
+
+          {/* Performance Chart */}
+          <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Subject-wise Performance Trend</h2>
+            <div className="h-[300px]">
+              <Line
+                data={chartData}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      max: 100,
+                      title: {
+                        display: true,
+                        text: 'Score (%)'
+                      }
+                    },
+                    x: {
+                      title: {
+                        display: true,
+                        text: 'Test Date'
+                      }
+                    }
+                  },
+                  plugins: {
+                    legend: {
+                      position: 'top',
+                      labels: {
+                        usePointStyle: true,
+                        padding: 20
+                      }
+                    },
+                    title: {
+                      display: true,
+                      text: 'Recent Test Performance by Subject'
+                    }
+                  }
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Past Tests section */}
         {/* Add this new section for past tests */}
         <div className="bg-white rounded-lg shadow-md p-6 mt-8">
           <h2 className="text-xl font-bold text-gray-900 mb-4">Past Tests</h2>
@@ -192,7 +352,7 @@ const Dashboard = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {pastTests.map((test) => (
+                {pastTests.map((test:any) => (
                   <tr
                     key={test.id}
                     onClick={() => handleTestClick(test.id)}

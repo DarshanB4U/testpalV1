@@ -125,6 +125,11 @@ export const questionService = {
     });
     return response.data;
   },
+  attemptedQuestions:async()=>{
+    const response = await api.get("/users/getQuestionsAttempted");
+    console.log(response);
+    return response.data;
+  }
 };
 
 // AI Assistant service

@@ -33,7 +33,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
       if (user) {
         const tests: any[] = await authService.getAllTests();
-
+       console.log("this is test data",tests)
+        // Assuming you have a function to fetch the user
         // Here you can make an API call to fetch additional user data
         // For now, we'll use mock data
         setUserData({
