@@ -32,7 +32,7 @@ function App() {
 
             {/* Protected Routes */}
             <Route
-              path="/daily-practice"
+              path="/daily-practice"ls
               element={
                 <ProtectedRoute>
                   <DailyPractice />

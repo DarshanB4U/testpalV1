@@ -98,6 +98,7 @@ const Dashboard = () => {
         const datesSet = new Set(
           tests.map(test => new Date(test.createdAt).toISOString().slice(0, 10))
         );
+        console.log("this is date set ",datesSet)
       
         let streak = 0;
         let currentDate = new Date(today);
@@ -326,7 +327,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Past Tests section div*/}
+          {/* Past Tests section div */}
 
         <div className="bg-white rounded-lg shadow-md p-6 mt-8">
           <h2 className="text-xl font-bold text-gray-900 mb-4">Past Tests</h2>

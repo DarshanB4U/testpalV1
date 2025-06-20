@@ -5,7 +5,7 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "./config.js";
-import { authMiddlware } from "./middlewares/authMiddlware";
+import { authMiddlware } from "./middlewares/authMiddlware.js";
 import {
   generateAndStoreTest,
   getAllTests,
